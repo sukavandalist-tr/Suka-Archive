@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUKA ARCHIVE</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --card-bg: #161616;
+      --text: #f0f0f0;
+      --muted: #888888;
+      --accent: #ffffff;
+      --border: #222222;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .brand h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 1.8rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--accent);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.5rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    /* Grid */
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .artwork-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .artwork-card:hover {
+      transform: translateY(-5px);
+      border-color: #444;
+    }
+
+    .artwork-img-container {
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .artwork-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .artwork-card:hover .artwork-img-container img {
+      transform: scale(1.05);
+    }
+
+    .artwork-info {
+      padding: 1.2rem;
+    }
+
+    .artwork-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.03em;
+    }
+
+    .artwork-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    /* Lightbox Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal img {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      nav a { margin-left: 0; margin-right: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>SUKA ARCHIVE</h1>
+      <p>Official Graffiti & Street Art Documentation</p>
+    </div>
+    <nav>
+      <a href="#" class="active">Arşiv</a>
+      <a href="#">Hakkında</a>
+      <a href="#">İletişim</a>
+    </nav>
+  </header>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterSelection('all')">Tümü</button>
+    <button class="filter-btn" onclick="filterSelection('trains')">Tren & Metro</button>
+    <button class="filter-btn" onclick="filterSelection('walls')">Duvarlar</button>
+    <button class="filter-btn" onclick="filterSelection('shutters')">Kepenkler</button>
+  </div>
+
+  <main class="archive-grid">
+
+    <!-- 1. Marmaray / Metro Train -->
+    <article class="artwork-card filter-item trains" onclick="openModal('94031.jpg')">
+      <div class="artwork-img-container">
+        <img src="94031.jpg" alt="Suka Metro Tag">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Metro Action</h2>
+        <div class="artwork-meta">
+          <span>Tren / Metro</span>
+          <span>2026</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. Renkli Duvar (Suka) -->
+    <article class="artwork-card filter-item walls" onclick="openModal('90175.heic')">
+      <div class="artwork-img-container">
+        <img src="90175.heic" alt="Suka Colorful Wall">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Chromatic Wall</h2>
+        <div class="artwork-meta">
+          <span>Sokak / Duvar</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. Beyaz / Siyah Throwup Duvar -->
+    <article class="artwork-card filter-item walls" onclick="openModal('88154.jpg')">
+      <div class="artwork-img-container">
+        <img src="88154.jpg" alt="Suka White Throwup">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Block Throwup</h2>
+        <div class="artwork-meta">
+          <span>Beton Duvar</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. Kırmızı/Siyah Kepenk -->
+    <article class="artwork-card filter-item shutters" onclick="openModal('88156.jpg')">
+      <div class="artwork-img-container">
+        <img src="88156.jpg" alt="Suka Red Shutter Piece">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Night Roller Shutter</h2>
+        <div class="artwork-meta">
+          <span>Dükkan Kepengi</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5. Gri/Siyah/Kırmızı Duvar Piece -->
+    <article class="artwork-card filter-item walls" onclick="openModal('88152.jpg')">
+      <div class="artwork-img-container">
+        <img src="88152.jpg" alt="Suka Night Piece">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Night Spot (4:WEZİR)</h2>
+        <div class="artwork-meta">
+          <span>Gece Spotu</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6. Tren Paneli / Whole Train Piece -->
+    <article class="artwork-card filter-item trains" onclick="openModal('88150.jpg')">
+      <div class="artwork-img-container">
+        <img src="88150.jpg" alt="Suka Train Piece">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Train Panel (SABIR)</h2>
+        <div class="artwork-meta">
+          <span>Tren Paneli</span>
+          <span>2026</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 7. Cam Karalama & Siyah/Sarı Duvar -->
+    <article class="artwork-card filter-item walls" onclick="openModal('86212.jpg')">
+      <div class="artwork-img-container">
+        <img src="86212.jpg" alt="Suka Window Glass Etch & Wall">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Glass Faces & Wall</h2>
+        <div class="artwork-meta">
+          <span>Cam Etch / Duvar</span>
+          <span>2026</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 8. Mavi/Sarı Yol Kenarı Duvarı -->
+    <article class="artwork-card filter-item walls" onclick="openModal('76125.heic')">
+      <div class="artwork-img-container">
+        <img src="76125.heic" alt="Suka Highway Wall">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Highway Wall</h2>
+        <div class="artwork-meta">
+          <span>Yol Kenarı</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 9. Yeşil Outline Beyaz Fill Duvar -->
+    <article class="artwork-card filter-item walls" onclick="openModal('73473.jpg')">
+      <div class="artwork-img-container">
+        <img src="73473.jpg" alt="Suka Green Outline Wall">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Spot Throwup</h2>
+        <div class="artwork-meta">
+          <span>Gece Spotu</span>
+          <span>2025</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- 10. Mor Kepenk Piece -->
+    <article class="artwork-card filter-item shutters" onclick="openModal('72318.heic')">
+      <div class="artwork-img-container">
+        <img src="72318.heic" alt="Suka Purple Shutter">
+      </div>
+      <div class="artwork-info">
+        <h2 class="artwork-title">SUKA — Purple Shutter (PASOR)</h2>
+        <div class="artwork-meta">
+          <span>Kepenk / Sokak</span>
+          <span>2026</span>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="modalImg" src="" alt="Full View">
+  </div>
+
+  <footer>
+    <p>&copy; 2026 SUKA ARCHIVE. All Rights Reserved.</p>
+    <p>Istanbul Street Art Documentation</p>
+  </footer>
+
+  <script>
+    // Modal Açma / Kapama
+    function openModal(imgSrc) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImg');
+      modal.style.display = 'flex';
+      modalImg.src = imgSrc;
+    }
+
+    function closeModal() {
+      document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // Filtreleme Fonksiyonu
+    function filterSelection(category) {
+      const items = document.querySelectorAll('.filter-item');
+      const buttons = document.querySelectorAll('.filter-btn');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      items.forEach(item => {
+        if (category === 'all' || item.classList.contains(category)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
